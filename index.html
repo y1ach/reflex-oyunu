@@ -9,31 +9,70 @@
       background: #121212;
       color: #fff;
       text-align: center;
-      padding-top: 100px;
+      padding: 50px 20px;
     }
+
     #message {
       font-size: 2rem;
       margin-bottom: 20px;
     }
-    #reaction {
-      font-size: 1.5rem;
-      margin-top: 20px;
+
+    #reaction, #score {
+      font-size: 1.2rem;
+      margin-top: 15px;
       color: #4caf50;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      #message { font-size: 1.5rem; }
+      #reaction, #score { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <div id="message">Refleks oyununa hoş geldin! Hazır ol...</div>
+  <div id="message">Refleks oyununa hoş geldin! Başlamak için butona bas.</div>
   <div id="reaction"></div>
+  <div id="score"></div>
+  <button id="startBtn">Oyunu Başlat</button>
 
   <script>
     const messageEl = document.getElementById("message");
     const reactionEl = document.getElementById("reaction");
+    const scoreEl = document.getElementById("score");
+    const startBtn = document.getElementById("startBtn");
+
     let startTime = 0;
     let canPress = false;
+    let deneme = 0;
+    let toplamSure = 0;
+
+    function resetMessages() {
+      reactionEl.textContent = "";
+      scoreEl.textContent = "";
+    }
 
     function startGame() {
-      const delay = Math.random() * 3000 + 2000; // 2 - 5 saniye arası
+      resetMessages();
+      messageEl.textContent = "Hazır ol...";
+      startBtn.style.display = "none";
+
+      const delay = Math.random() * 3000 + 2000; // 2-5 saniye
       setTimeout(() => {
         messageEl.textContent = "BAS!";
         startTime = performance.now();
@@ -44,16 +83,26 @@
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         if (!canPress) {
-          reactionEl.textContent = "Çok erken bastın!";
-        } else {
-          const reactionTime = (performance.now() - startTime) / 1000;
-          reactionEl.textContent = `Tepki süren: ${reactionTime.toFixed(3)} saniye!`;
+          messageEl.textContent = "Çok erken bastın! Oyun bitti.";
+          reactionEl.textContent = "";
+          startBtn.style.display = "block";
           canPress = false;
+          return;
         }
+
+        const sure = (performance.now() - startTime) / 1000;
+        deneme++;
+        toplamSure += sure;
+        reactionEl.textContent = `Tepki süren: ${sure.toFixed(3)} saniye.`;
+        scoreEl.textContent = `Deneme: ${deneme} | Ortalama: ${(toplamSure / deneme).toFixed(3)} saniye`;
+
+        messageEl.textContent = "Aferin! Yeniden denemek ister misin?";
+        startBtn.style.display = "block";
+        canPress = false;
       }
     });
 
-    startGame();
+    startBtn.addEventListener("click", startGame);
   </script>
 </body>
 </html>
