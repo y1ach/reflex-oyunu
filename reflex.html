@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Refleks Oyunu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      text-align: center;
+      padding-top: 100px;
+    }
+    #message {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    #reaction {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      color: #4caf50;
+    }
+  </style>
+</head>
+<body>
+  <div id="message">Refleks oyununa hoş geldin! Hazır ol...</div>
+  <div id="reaction"></div>
+
+  <script>
+    const messageEl = document.getElementById("message");
+    const reactionEl = document.getElementById("reaction");
+    let startTime = 0;
+    let canPress = false;
+
+    function startGame() {
+      const delay = Math.random() * 3000 + 2000; // 2 - 5 saniye arası
+      setTimeout(() => {
+        messageEl.textContent = "BAS!";
+        startTime = performance.now();
+        canPress = true;
+      }, delay);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        if (!canPress) {
+          reactionEl.textContent = "Çok erken bastın!";
+        } else {
+          const reactionTime = (performance.now() - startTime) / 1000;
+          reactionEl.textContent = `Tepki süren: ${reactionTime.toFixed(3)} saniye!`;
+          canPress = false;
+        }
+      }
+    });
+
+    startGame();
+  </script>
+</body>
+</html>
